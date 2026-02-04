@@ -28,12 +28,6 @@ Monte Carlo runs provide statistical validation, while utilities ensure numerica
 python run_monte_carlo.py
 ```
 
-### Programmatic usage
-```python
-from run_monte_carlo import main
-df, stats = main()
-```
-
 This will:
 - Run `N_MC_RUNS` Monte Carlo trials
 - Measure wall‑clock time
@@ -66,7 +60,7 @@ final_est, estimates, filtered_estimates, filtered_covs, _ = tracker.run_trackin
 ```
 
 ---
-## Python Dependencies (Python ≥ 3.9 recommended)
+## Python Dependencies (Python ≥ 3.13 recommended)
 The following packages are required:
 ### Core Scientific Stack
 - `numpy`
