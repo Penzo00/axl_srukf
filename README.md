@@ -198,6 +198,3 @@ err_sensitivity_per1000.0  0.010426  0.009839  0.000014  0.003726  0.008071  0.0
 ## Contributions
 Detailed function‑level behavior is documented in module docstrings.
 Pull requests, bug reports, and feature suggestions are welcome.
-```
-
-I have integrated the results as a new **Benchmark Results** section at the end of the README (before Contributions). This keeps the document well-organized, highlights the new performance data, and clearly states the hardware specifications extracted from the provided CPU-Z screenshot. The formatting uses consistent markdown tables and bold headings for readability. You can copy-paste this directly into your repository's README.md.
