@@ -205,3 +205,69 @@ This description and the documentation of the codes were created mainly using LL
 
 ---
 ## References
+```bibtex
+@article{papakonstantinou2022scaled,
+  title={A Scaled Spherical Simplex Filter (S3F) with a decreased n+ 2 sigma points set size and equivalent 2n+ 1 Unscented Kalman Filter (UKF) accuracy},
+  author={Papakonstantinou, Konstantinos G and Amir, Mariyam and Warn, Gordon P},
+  journal={Mechanical Systems and Signal Processing},
+  volume={163},
+  pages={107433},
+  year={2022},
+  publisher={Elsevier}
+}
+@article{li2022constrained,
+  title={Constrained unscented Kalman filter for parameter identification of structural systems},
+  author={Li, Dan and Wang, Yang},
+  journal={Structural Control and Health Monitoring},
+  volume={29},
+  number={4},
+  pages={e2908},
+  year={2022},
+  publisher={Wiley Online Library}
+}
+@inproceedings{gu2009algorithm,
+  title={Algorithm of adaptive fading memory UKF in bearings-only target tracking},
+  author={Gu, Xiao-dong and Yuan, Zhi-yong and Qiu, Zhi-ming},
+  booktitle={2009 2nd International Congress on Image and Signal Processing},
+  pages={1--4},
+  year={2009},
+  organization={IEEE}
+}
+@article{xie2025state,
+  title={State of charge estimation of Li-ion batteries based on strong tracking adaptive square root unscented Kalman filter with generalized maximum correntropy criterion},
+  author={Xie, Hao and Lin, Jingli and Huang, Ziyi and Kuang, Rui and Hao, Yuanchao},
+  journal={Journal of Energy Storage},
+  volume={111},
+  pages={115401},
+  year={2025},
+  publisher={Elsevier}
+}
+@article{de2017joseph,
+  title={Joseph covariance formula adaptation to square-root sigma-point kalman filters},
+  author={De Vivo, Francesco and Brandl, Alberto and Battipede, Manuela and Gili, Piero},
+  journal={Nonlinear dynamics},
+  volume={88},
+  number={3},
+  pages={1969--1986},
+  year={2017},
+  publisher={Springer}
+}
+@inproceedings{van2001square,
+  title={The square-root unscented Kalman filter for state and parameter-estimation},
+  author={Van Der Merwe, Rudolph and Wan, Eric A},
+  booktitle={2001 IEEE international conference on acoustics, speech, and signal processing. Proceedings (Cat. No. 01CH37221)},
+  volume={6},
+  pages={3461--3464},
+  year={2001},
+  organization={IEEE}
+}
+@inproceedings{wan2000unscented,
+  title={The unscented Kalman filter for nonlinear estimation},
+  author={Wan, Eric A and Van Der Merwe, Rudolph},
+  booktitle={Proceedings of the IEEE 2000 adaptive systems for signal processing, communications, and control symposium (Cat. No. 00EX373)},
+  pages={153--158},
+  year={2000},
+  organization={Ieee}
+}
+```
+
