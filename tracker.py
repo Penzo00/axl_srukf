@@ -48,7 +48,7 @@ from typing import List, Tuple, Optional
 
 from model import propagate_state, meas_func
 from srukf import SRUKF
-from config import UKFConfig, logger, _step
+from config import UKFConfig, logger, _step, min_eig_floor
 from model import compute_meas_gradient, compute_static_sensitivity
 from utils import sens_jacobian
 
@@ -184,7 +184,7 @@ class ParameterTracker:
         current_time = 0.0
         # Convergence monitoring parameters
         CONVERGENCE_WINDOW = 100
-        CONVERGENCE_THRESHOLD = 0.0001  # 0.01%
+        CONVERGENCE_THRESHOLD = 0.001  # 0.1%
         sensitivity_history = []
         std_sensitivity_history = []
         current_estimate = [0.35, .35, .5, 0., 0., 0.]
@@ -221,11 +221,11 @@ class ParameterTracker:
                 std_old = std_sensitivity_history[-CONVERGENCE_WINDOW]
 
                 # Calculate relative changes
-                sens_change = abs((sens - sens_old) / sens_old) if abs(sens_old) > 1e-12 else abs(sens - sens_old)
-                std_change = abs((std_s - std_old) / std_old) if abs(std_old) > 1e-12 else abs(std_s - std_old)
+                sens_change = abs((sens - sens_old) / sens_old) if abs(sens_old) > min_eig_floor else abs(sens - sens_old)
+                std_change = abs((std_s - std_old) / std_old) if abs(std_old) > min_eig_floor else abs(std_s - std_old)
 
                 # Check if both sensitivity and its uncertainty have converged
-                if sens_change < CONVERGENCE_THRESHOLD and std_change < CONVERGENCE_THRESHOLD:
+                if sens_change < CONVERGENCE_THRESHOLD and std_change < CONVERGENCE_THRESHOLD and sens < CONVERGENCE_THRESHOLD:
                     if self.show:
                         logger.info(
                             f"Convergence reached at iteration {iteration}: "

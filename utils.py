@@ -1,33 +1,107 @@
 """
-Utilities module providing Numba-accelerated functions for signal processing, statistical computations,
-and support for SRUKF and ODE-based modeling.
-This module contains a collection of @njit-decorated functions optimized for performance in a Numba environment.
-These functions support tasks such as weighted deviation calculations, sigma point generation for unscented transforms,
-covariance regularization, peak/valley detection in signals, safety checks for chirp responses,
-bisection searches for minimal amplitudes, finite-difference Jacobians, percentile calculations,
-descriptive statistics, and sensitivity propagation.
-The functions are designed to integrate with ODE solvers (via `solve_ODE` from `model`) and
-configuration parameters (from `config`).
+srukf_utils — Numba-accelerated utilities for SRUKF, ODE-model probing, and robust signal processing
+===============================================================================================
 
-Notes / high-level behaviour
-----------------------------
-- Many functions are compiled with Numba's @njit for speed and to enable parallel execution
-  where applicable (e.g., using prange).
-- Covariance handling emphasizes numerical stability: `_regularize_covariance` ensures SPD matrices via eigenvalue flooring.
-- Signal processing functions like `find_peaks_1d` and `find_valleys_1d` use strict inequalities to detect local extrema,
-  ignoring plateaus and edges.
-- The chirp safety check (`compute_chirp_range_safe`) incorporates explosion detection and
-  strict peak/valley count validation to handle solver instabilities.
-- Statistical functions (`percentile`, `compute_stats`) handle NaNs and provide a fixed set of descriptors,
-  including skew and kurtosis.
-- Sensitivity-related functions (`sens_jacobian`, `compute_sens_and_std`) use finite differences and quadratic forms
-  for uncertainty propagation.
+Summary
+-------
+This module provides a compact, high-performance collection of numerical utilities intended for use
+inside a square-root unscented Kalman filter (SRUKF) workflow and for running/analysing ODE-based
+chirp experiments. All core routines that benefit from speed are decorated with ``@njit`` so they
+can be compiled by Numba and run in nopython mode.
 
-Logging and output
-------------------
-- No built-in logging; functions are pure and return arrays or scalars directly.
-- Exceptions in non-critical paths (e.g., inversion failures in `compute_constrained_gain`) fallback to unconstrained values silently.
+Key capabilities
+----------------
+- Linear algebra helpers for sigma-point generation and weighted deviations.
+- Covariance regularization to enforce symmetric positive definiteness (SPD).
+- Constrained-gain projection to handle linear inequality constraints A x <= b.
+- Robust, Numba-friendly peak/valley detection (smoothing + prominence + distance suppression).
+- Cycle-aware pairing of extrema for reliable 3rd→4th peak/valley comparisons in noisy traces.
+- Chirp safety test that preserves strict directional logic while handling exploded ODE solutions.
+- Utility statistics (percentiles, compute_stats) and sensitivity propagation via finite differences.
+- Minimal bisection/bracketing routine (compute_min_A) to find the smallest amplitude that triggers
+  the safety predicate.
+
+Intended usage
+--------------
+This module is designed to be imported into a larger model/estimation package. Typical usage
+patterns include:
+- Calling ``generate_sigma_points`` and ``compute_ut_weights`` from SRUKF update/prediction steps.
+- Computing robust peaks/valleys from ODE-derived traces (``dC``) to decide whether a chirp is
+  "unsafe" using ``compute_chirp_range_safe``.
+- Running ``compute_min_A`` as a wrapper that finds the minimal amplitude that violates safety.
+- Estimating static sensitivities and propagated uncertainties via ``compute_sens_and_std``.
+
+Module-level requirements and expected globals
+----------------------------------------------
+The module expects the following objects to be available in the importing module's namespace (they
+are imported here from ``config`` and ``model`` in the current codebase):
+
+- ``_step`` : float
+    Integration / sampling timestep (seconds). Used to convert time-based distances to samples.
+- ``total_duration`` : float
+    Duration used to build the solver's evaluation times.
+- ``dur_chirp`` : float
+    Chirp interval duration (seconds); used to slice the ODE response.
+- ``q`` : np.ndarray
+    Coefficients used to construct the sigma-point coefficient matrix.
+- ``min_eig_floor`` : float
+    Minimal eigenvalue floor used for covariance regularization and numerical safe-guards.
+- ``solve_ODE(uncertainty, A)`` : callable
+    Function that runs the ODE model and returns a 1D array ``dC`` sampled at ``_step`` intervals.
+- ``compute_static_sensitivity(m)`` : callable
+    Function returning the static sensitivity (scalar) for a 5-element parameter vector ``m``.
+
+Important behavior and design choices
+------------------------------------
+- Numba-first: Many helpers are ``@njit``-decorated and written in a style that avoids Python objects
+  (lists, comprehensions, dynamic resizing) to ensure compilation. If Numba compilation fails for a
+  particular host environment, move a given function out of Numba or provide fallbacks.
+- Robust extrema detection:
+  - The naive 3-sample test ``x[i] > x[i-1] and x[i] > x[i+1]`` is replaced by a pipeline:
+    smoothing (moving average), candidate detection, local-prominence calculation, minimum-distance
+    suppression (greedy preference for larger peaks). This dramatically reduces spurious extrema
+    from Gaussian noise while retaining true cycle peaks.
+  - Valleys are found by applying the same pipeline to ``-signal`` ensuring symmetry of behavior.
+  - Cycle pairing: to compare the "3rd" and "4th" extrema reliably, peaks are paired using valleys as
+    cycle anchors (dominant peak between valley intervals). This prevents misalignment when noise
+    creates extra small extrema near cycle boundaries.
+- Safety boolean logic preserved: the chirp safety predicate uses your original directional rule:
+  mark unsafe only when both peaks and valleys move in the same direction AND one of the changes
+  (peak or valley difference) exceeds ``safety_val``. The module does **not** change that logic —
+  it only makes detection of the extrema themselves more robust.
+- Explosion detection: if the ODE response's maximum absolute value exceeds ``max_abs_threshold``,
+  the solution is considered exploded/unphysical and the test returns True (unsafe).
+- Conservative failure modes: when there are insufficient robust extrema to make a decision, the
+  module returns ``False`` (safe). This choice favors avoiding false positives when the signal is
+  ambiguous; tune this behavior if your application requires otherwise.
+
+Tunable parameters and where to change them
+------------------------------------------
+Internal parameters (defaults are conservative and can be adjusted to match sampling rate and SNR):
+- smoothing window (samples) inside ``find_peaks_1d`` — default: 7
+- minimum peak separation (seconds converted to samples using ``_step``) — default: 0.2 s
+- prominence threshold multiplier — default: 2.5 * estimated noise sigma (estimated from the first
+  5% of the signal)
+- explosion threshold ``max_abs_threshold`` in ``compute_chirp_range_safe`` — default: 150.
+
+Examples
+--------
+Minimal conceptual examples (pseudocode):
+
+    # 1) find peaks on a noisy ODE response
+    dC = solve_ODE(uncertainty, A)
+    t_eval = np.arange(0.0, total_duration + _step, _step)
+    dC_chirp = dC[t_eval <= dur_chirp]
+    peaks = find_peaks_1d(dC_chirp)
+    valleys = find_valleys_1d(dC_chirp)
+
+    # 2) compute whether the chirp is unsafe
+    unsafe = compute_chirp_range_safe(uncertainty, A)
+
+    # 3) find minimal unsafe amplitude
+    A_crit = compute_min_A(uncertainty, A_start=0.8)
 """
+
 from typing import Tuple
 
 from numba import njit, prange
@@ -297,145 +371,618 @@ def compute_constrained_gain(unconstrained_gain: np.ndarray,
         return unconstrained_gain, unconstrained_estimate
 
 @njit
-def find_peaks_1d(signal: np.ndarray) -> np.ndarray:
+def _moving_average(signal: np.ndarray, window: int) -> np.ndarray:
     """
-    Find indices of local maxima in a 1D signal using strict inequalities.
+    Compute a simple moving-average of a 1D signal with naive edge handling.
 
-    A point i (1 <= i <= n-2) is considered a peak if signal[i] > signal[i-1] and signal[i] > signal[i+1].
+    The average is computed using a sliding window of length ``window`` centered
+    at every sample. Near the edges the window is truncated so that the average
+    uses only available samples (no padding).
 
     Parameters
     ----------
-    signal : np.ndarray, shape (n,)
-        1D signal array.
+    signal : np.ndarray
+        1D array of signal samples.
+    window : int
+        Window length to use for the moving average. If ``window`` is even, the
+        function treats half = window // 2 and uses an asymmetric window
+        (consistent with integer division). ``window`` should be >= 1.
 
     Returns
     -------
-    np.ndarray, shape (k,)
-        Indices of detected peaks. Edges are never peaks; plateaus are not peaks.
+    np.ndarray
+        Array of the same shape as ``signal`` containing the smoothed samples.
+
+    Notes
+    -----
+    - This implementation is intentionally simple and NumPy/Numba friendly.
+    - It is **not** optimized for very large windows or high-performance
+      convolution; its purpose is to remove high-frequency noise before peak
+      detection in a Numba-compatible way.
     """
     n = signal.shape[0]
-    # boolean mask for peaks
-    mask = np.zeros(n, dtype=np.bool_)
-    count = 0
-    for i in range(1, n - 1):
-        if signal[i] > signal[i - 1] and signal[i] > signal[i + 1]:
-            mask[i] = True
-            count += 1
-    # allocate result
-    res = np.empty(count, dtype=np.int64)
-    j = 0
+    out = np.empty(n, dtype=signal.dtype)
+    half = window // 2
     for i in range(n):
-        if mask[i]:
-            res[j] = i
-            j += 1
+        left = i - half
+        right = i + half
+        if left < 0:
+            left = 0
+        if right >= n:
+            right = n - 1
+        s = 0.0
+        cnt = 0
+        for j in range(left, right + 1):
+            s += signal[j]
+            cnt += 1
+        out[i] = s / cnt
+    return out
+
+
+@njit
+def _std_from_slice(arr: np.ndarray) -> float:
+    """
+    Compute the population standard deviation of a 1D slice.
+
+    This uses the population formula (division by N), which is consistent with
+    a noise sigma estimate for prominence thresholds.
+
+    Parameters
+    ----------
+    arr : np.ndarray
+        1D numeric array. If ``arr`` is empty, returns 0.0.
+
+    Returns
+    -------
+    float
+        Population standard deviation of ``arr``.
+    """
+    n = arr.shape[0]
+    if n == 0:
+        return 0.0
+    mean = 0.0
+    for i in range(n):
+        mean += arr[i]
+    mean /= n
+    var = 0.0
+    for i in range(n):
+        diff = arr[i] - mean
+        var += diff * diff
+    var /= n
+    return np.sqrt(var)
+
+
+@njit
+def _suppress_peaks_greedy(peaks: np.ndarray, values: np.ndarray, min_dist: int) -> np.ndarray:
+    """
+    Greedy suppression of peaks that are closer than ``min_dist`` samples.
+
+    The algorithm:
+      * Sort candidate peaks by descending value (largest peaks first).
+      * Accept a candidate if it is farther than ``min_dist`` from any already
+        accepted peak.
+      * Return the accepted peaks sorted in ascending (time) order.
+
+    Parameters
+    ----------
+    peaks : np.ndarray
+        1D integer array of candidate peak indices (sample indices).
+    values : np.ndarray
+        1D array of same length as ``peaks`` with corresponding peak values.
+    min_dist : int
+        Minimum allowed distance (in samples) between kept peaks.
+
+    Returns
+    -------
+    np.ndarray
+        Array of accepted peak indices, sorted ascending. May be empty.
+
+    Notes
+    -----
+    - This is a simple greedy strategy that prefers larger peaks. It is easy
+      to reason about and is robust for noisy signals where small local maxima
+      appear near large true peaks.
+    """
+    k = peaks.shape[0]
+    if k == 0:
+        return np.empty(0, dtype=np.int64)
+
+    # Build index order by values descending (selection sort to stay Numba-friendly)
+    order = np.empty(k, dtype=np.int64)
+    used = np.zeros(k, dtype=np.bool_)
+    for i in range(k):
+        max_j = -1
+        max_val = -1e300
+        for j in range(k):
+            if not used[j] and values[j] > max_val:
+                max_val = values[j]
+                max_j = j
+        used[max_j] = True
+        order[i] = max_j
+
+    # Greedily accept peaks if not within min_dist of any accepted
+    accepted = np.empty(k, dtype=np.int64)
+    accepted_count = 0
+    for idx_i in range(k):
+        j = order[idx_i]
+        pj = peaks[j]
+        too_close = False
+        for a in range(accepted_count):
+            if abs(int(accepted[a]) - int(pj)) <= min_dist:
+                too_close = True
+                break
+        if not too_close:
+            accepted[accepted_count] = pj
+            accepted_count += 1
+
+    # Shrink and return in ascending order
+    res = np.empty(accepted_count, dtype=np.int64)
+    for i in range(accepted_count):
+        res[i] = accepted[i]
+
+    # Simple in-place sort (ascending)
+    for a in range(res.shape[0] - 1):
+        for b in range(a + 1, res.shape[0]):
+            if res[b] < res[a]:
+                tmp = res[a]; res[a] = res[b]; res[b] = tmp
     return res
+
+
+@njit
+def _find_candidate_peaks(sm: np.ndarray) -> np.ndarray:
+    """
+    Find candidate peaks on a smoothed signal using a 3-point strict test.
+
+    A candidate at index i satisfies sm[i] > sm[i-1] and sm[i] > sm[i+1].
+
+    Parameters
+    ----------
+    sm : np.ndarray
+        Smoothed 1D signal.
+
+    Returns
+    -------
+    np.ndarray
+        Indices of candidate peaks (unsuppressed / unscreened). May be empty.
+    """
+    n = sm.shape[0]
+    cand = np.empty(n, dtype=np.int64)
+    cnt = 0
+    for i in range(1, n - 1):
+        if sm[i] > sm[i - 1] and sm[i] > sm[i + 1]:
+            cand[cnt] = i
+            cnt += 1
+    if cnt == 0:
+        return np.empty(0, dtype=np.int64)
+    res = np.empty(cnt, dtype=np.int64)
+    for i in range(cnt):
+        res[i] = cand[i]
+    return res
+
+
+@njit
+def _compute_prominences(sm: np.ndarray, cand: np.ndarray, search_range: int):
+    """
+    Compute a simple local prominence for each candidate peak.
+
+    Prominence is computed as: peak_value - max(local_left_min, local_right_min),
+    where local minima are searched within ``search_range`` samples from the peak.
+
+    Parameters
+    ----------
+    sm : np.ndarray
+        Smoothed 1D signal.
+    cand : np.ndarray
+        Indices of candidate peaks.
+    search_range : int
+        Half-window (in samples) to search for left/right minima.
+
+    Returns
+    -------
+    (np.ndarray, np.ndarray)
+        Tuple of (prominences, peak_values) as arrays aligned to ``cand``.
+    """
+    k = cand.shape[0]
+    prominences = np.empty(k, dtype=sm.dtype)
+    vals = np.empty(k, dtype=sm.dtype)
+    n = sm.shape[0]
+    for idx in range(k):
+        i = cand[idx]
+        # left min
+        left_min = sm[i]
+        left_bound = i - search_range
+        if left_bound < 0:
+            left_bound = 0
+        j = i - 1
+        while j >= left_bound:
+            if sm[j] < left_min:
+                left_min = sm[j]
+            j -= 1
+        # right min
+        right_min = sm[i]
+        right_bound = i + search_range
+        if right_bound > n - 1:
+            right_bound = n - 1
+        j = i + 1
+        while j <= right_bound:
+            if sm[j] < right_min:
+                right_min = sm[j]
+            j += 1
+        # prominence
+        larger_min = left_min if left_min > right_min else right_min
+        prominences[idx] = sm[i] - larger_min
+        vals[idx] = sm[i]
+    return prominences, vals
+
+
+@njit
+def _select_peaks(sm: np.ndarray, cand: np.ndarray,
+                  prominences: np.ndarray, vals: np.ndarray,
+                  min_prominence: float, min_distance: int) -> np.ndarray:
+    """
+    Filter candidate peaks by minimum prominence and apply distance suppression.
+
+    Parameters
+    ----------
+    sm : np.ndarray
+        Smoothed signal (only used for type/consistency; values also passed).
+    cand : np.ndarray
+        Candidate peak indices.
+    prominences : np.ndarray
+        Prominences aligned with ``cand``.
+    vals : np.ndarray
+        Peak values aligned with ``cand``.
+    min_prominence : float
+        Minimum required prominence (absolute units) for a peak to be kept.
+    min_distance : int
+        Minimum number of samples between kept peaks.
+
+    Returns
+    -------
+    np.ndarray
+        Final kept peak indices (ascending). May be empty.
+    """
+    sel_cnt = 0
+    tmp_peaks = np.empty(cand.shape[0], dtype=np.int64)
+    tmp_vals = np.empty(cand.shape[0], dtype=sm.dtype)
+    for i in range(cand.shape[0]):
+        if prominences[i] >= min_prominence:
+            tmp_peaks[sel_cnt] = cand[i]
+            tmp_vals[sel_cnt] = vals[i]
+            sel_cnt += 1
+    if sel_cnt == 0:
+        return np.empty(0, dtype=np.int64)
+    peaks_arr = np.empty(sel_cnt, dtype=np.int64)
+    vals_arr = np.empty(sel_cnt, dtype=sm.dtype)
+    for i in range(sel_cnt):
+        peaks_arr[i] = tmp_peaks[i]
+        vals_arr[i] = tmp_vals[i]
+    kept = _suppress_peaks_greedy(peaks_arr, vals_arr, min_distance)
+    return kept
+
+
+# -----------------------
+# Public functions (names preserved)
+# -----------------------
+
+@njit
+def find_peaks_1d(signal: np.ndarray) -> np.ndarray:
+    """
+    Robust peak finder for noisy 1D signals (Numba-compatible).
+
+    This replaces the naive 3-sample strict test with a robust pipeline:
+      1. Small moving-average smoothing to reduce high-frequency Gaussian noise.
+      2. Candidate peak detection using a 3-point strict test on the smoothed trace.
+      3. Local prominence computation for every candidate (searching a small
+         neighborhood for left/right minima).
+      4. Filter candidates by a minimum prominence threshold derived from an
+         estimate of the local noise sigma.
+      5. Greedy suppression of peaks that are closer than a configured minimum
+         distance (prefer larger peaks).
+      6. Return final peak indices sorted in ascending (time) order.
+
+    The intent is to (a) reduce spurious tiny maxima created by noise, (b)
+    preserve true cycle peaks, and (c) be fully Numba-friendly (no Python-only
+    calls).
+
+    Parameters
+    ----------
+    signal : np.ndarray
+        1D signal array containing samples (float). The function expects
+        reasonably sampled cycles and that a short initial segment can be used
+        to estimate noise variance.
+
+    Returns
+    -------
+    np.ndarray
+        1D integer array of indices of detected peaks (ascending). May be empty.
+
+    Notes
+    -----
+    - Tunable internal parameters (safe defaults chosen):
+        * smoothing window: 7 samples
+        * minimum distance: ~0.2 s converted to samples using global ``_step``
+          (falls back to a small fraction of the signal length if ``_step``
+          is unavailable)
+        * prominence threshold: 2.5 * estimated noise sigma from the first
+          5% of samples (population std)
+    - If you find real peaks being removed increase the smoothing window or
+      decrease ``prominence_sigma_mult`` inside the function (2.0-3.0 typical).
+    - The function is deterministic and suitable for inclusion in an njit-ed
+      pipeline.
+    """
+    n = signal.shape[0]
+    if n < 3:
+        return np.empty(0, dtype=np.int64)
+
+    # Parameters (tweak if needed)
+    smooth_window = 7  # odd, small smoothing to remove high-frequency noise
+    # min distance between peaks (in samples); try to derive from global _step
+    try:
+        min_distance_samples = int(0.2 / _step)
+    except Exception:
+        min_distance_samples = max(1, n // 50)
+    if min_distance_samples < 1:
+        min_distance_samples = 1
+
+    # estimate noise sigma from a short pre-chirp segment (first 5% of samples, at least 2)
+    pre_n = n // 20
+    if pre_n < 2:
+        pre_n = 2
+    noise_sigma = _std_from_slice(signal[:pre_n])
+    prominence_sigma_mult = 2.5
+    min_prominence = prominence_sigma_mult * noise_sigma
+
+    # smooth -> candidates -> prominences -> selection
+    sm = _moving_average(signal, smooth_window)
+    cand = _find_candidate_peaks(sm)
+    if cand.shape[0] == 0:
+        return np.empty(0, dtype=np.int64)
+
+    search_range = max(1, min_distance_samples // 2)
+    prominences, vals = _compute_prominences(sm, cand, search_range)
+    peaks = _select_peaks(sm, cand, prominences, vals, min_prominence, min_distance_samples)
+    return peaks
+
 
 @njit
 def find_valleys_1d(signal: np.ndarray) -> np.ndarray:
     """
-    Find indices of local minima in a 1D signal using strict inequalities.
+    Robust valley finder implemented as peaks on the negated signal.
 
-    A point i (1 <= i <= n-2) is considered a valley if signal[i] < signal[i-1] and signal[i] < signal[i+1].
-
-    This is implemented by finding peaks in the negated signal.
+    This preserves the original function name/signature but delegates to the
+    robust peak-finding pipeline applied to ``-signal`` so that minima are
+    detected with identical logic and robustness.
 
     Parameters
     ----------
-    signal : np.ndarray, shape (n,)
+    signal : np.ndarray
         1D signal array.
 
     Returns
     -------
-    np.ndarray, shape (k,)
-        Indices of detected valleys. Edges are never valleys; plateaus are not valleys.
+    np.ndarray
+        Indices of detected valleys (ascending). May be empty.
     """
     return find_peaks_1d(-signal)
+
+
+@njit
+def _pair_peaks_valleys_by_last_cycles(signal: np.ndarray, peaks: np.ndarray, valleys: np.ndarray):
+    """
+    Pair peaks and valleys robustly to extract the '3rd' and '4th' extrema.
+
+    Strategy:
+      - Use the last two valleys as cycle anchors: v3 = valleys[-2], v4 = valleys[-1].
+      - Find the dominant (largest) peak between the previous valley and v3 -> p3.
+      - Find the dominant peak between v3 and v4 -> p4.
+      - Fallback: if either p3 or p4 cannot be found, use the last two peaks.
+
+    Returns
+    -------
+    tuple (int, int, int, int)
+        (p3_idx, p4_idx, v3_idx, v4_idx) or (-1, -1, -1, -1) on failure.
+
+    Notes
+    -----
+    - This pairing approach reduces the chance of mis-aligned comparisons when
+      small spurious extrema appear at cycle boundaries.
+    """
+    vn = valleys.shape[0]
+    pn = peaks.shape[0]
+    if vn < 2:
+        return -1, -1, -1, -1
+    v4_idx = valleys[vn - 1]
+    v3_idx = valleys[vn - 2]
+
+    if vn >= 3:
+        prev_v = valleys[vn - 3]
+    else:
+        prev_v = 0
+
+    # find dominant peak in (prev_v, v3)
+    p3_idx = -1
+    p3_val = -1e300
+    for i in range(pn):
+        p = peaks[i]
+        if prev_v < p < v3_idx:
+            if signal[p] > p3_val:
+                p3_val = signal[p]
+                p3_idx = p
+
+    # find dominant peak in (v3, v4)
+    p4_idx = -1
+    p4_val = -1e300
+    for i in range(pn):
+        p = peaks[i]
+        if v3_idx < p < v4_idx:
+            if signal[p] > p4_val:
+                p4_val = signal[p]
+                p4_idx = p
+
+    # fallback to last two peaks if missing
+    if p3_idx == -1 or p4_idx == -1:
+        if pn >= 2:
+            p3_idx = peaks[pn - 2]
+            p4_idx = peaks[pn - 1]
+        elif pn == 1:
+            p3_idx = peaks[0]
+            p4_idx = peaks[0]
+        else:
+            return -1, -1, -1, -1
+
+    return p3_idx, p4_idx, v3_idx, v4_idx
+
 
 @njit
 def compute_chirp_range_safe(uncertainty: np.ndarray, A: float,
                              safety_val: float = 10., max_voltage: float = 20.,
                              max_abs_threshold: float = 150.) -> bool:
     """
-    Determine whether a chirp response is 'unsafe' for amplitude A by checking
-    the difference between the 3rd and 4th peaks/valleys in the chirp interval.
+    Determine whether a chirp response is 'unsafe' for a given amplitude ``A``.
 
-    Modified to handle exploded solutions: if max(|dC_chirp_full|) exceeds a threshold,
-    treat as unsafe (return True).
+    The test inspects the behavior of the 3rd and 4th peaks and valleys within
+    the chirp interval and applies the original directional safety logic:
+      - Unsafe if the peak change from 3 -> 4 exceeds ``safety_val`` AND
+        both peaks and valleys **increase** between the two cycles.
+      - OR unsafe if the valley change from 3 -> 4 exceeds ``safety_val`` AND
+        both valleys and peaks **decrease** between the two cycles.
+
+    This implementation preserves the exact final boolean logic you requested
+    but makes detection robust against Gaussian measurement noise by:
+      * smoothing the trace,
+      * using prominence-based peak/valley selection,
+      * enforcing a minimum distance between peaks,
+      * pairing peaks and valleys by cycle anchors (valleys) so that the 3rd/4th
+        extrema are the intended cycle extrema.
 
     Parameters
     ----------
     uncertainty : np.ndarray
-        Parameter uncertainty vector passed to the ODE solver.
+        Parameter uncertainty vector passed to the ODE solver. The routine
+        forwards this into ``solve_ODE`` (must be available in the module).
     A : float
         Trial amplitude for the chirp.
     safety_val : float, optional
-        Threshold for absolute difference between successive peaks/valleys to be considered unsafe.
+        Threshold (absolute units, same units as the signal) that a change
+        between the 3rd and 4th extrema must exceed to be considered unsafe.
     max_voltage : float, optional
-        Hard voltage cap; if A > max_voltage the function returns True immediately.
+        Hard cap on amplitude; if ``A > max_voltage`` the function returns True.
     max_abs_threshold : float, optional
-        Threshold for max absolute value in dC_chirp_full to detect exploded/unphysical solutions.
+        If the maximum absolute value of the chirp response exceeds this value,
+        treat the solution as exploded/unphysical and return True.
 
     Returns
     -------
     bool
-        True if chirp is considered unsafe (i.e., difference > safety_val for peaks or valleys,
-        or exploded, or A > max_voltage); False otherwise.
+        True if the chirp is considered unsafe (exploded, amplitude too high,
+        or directional change in extrema meeting the safety criteria);
+        False otherwise.
+
+    Raises
+    ------
+    (No explicit raises — this function is njit-decorated and relies on
+    surrounding module globals like ``_step``, ``total_duration``, ``dur_chirp``
+    and a callable ``solve_ODE``. Ensure these exist and are numeric/callable.)
+
+    Notes
+    -----
+    - The function returns ``False`` (safe) when there are insufficient robustly
+      detected extrema to make a decision (rather than risking false positives).
+    - If you prefer a stricter/looser detection, tune the internal parameters of
+      ``find_peaks_1d`` (smoothing window, prominence multiplier, minimum
+      distance).
     """
+    # immediate hard-limit checks
     if A > max_voltage:
         return True
+
+    # Obtain the full dC trace from the ODE solver (module-level solve_ODE is required)
     dC = solve_ODE(uncertainty, A)
+
+    # t_eval uses module-level total_duration and _step; these must be defined
     t_eval = np.arange(0.0, total_duration + _step, _step)
     idx_chirp_full = t_eval <= dur_chirp
     dC_chirp_full = dC[idx_chirp_full]
 
-    # Add explosion check before peak/valley detection
+    # explosion/unphysical check (early exit)
     if np.max(np.abs(dC_chirp_full)) > max_abs_threshold:
-        return True  # Exploded/unphysical: treat as unsafe
+        return True
 
+    # robust peak / valley detection
     peaks = find_peaks_1d(dC_chirp_full)
     valleys = find_valleys_1d(dC_chirp_full)
 
-    # Add strict check for expected number (exactly 4 peaks/valleys)
-    if peaks.shape[0] != 4 or valleys.shape[0] != 4:
-        return False  # Invalid if not exactly 4: treat as safe (not yet unstable)
+    # require at least two valleys and two peaks to form meaningful 3rd/4th comparison
+    if peaks.shape[0] < 2 or valleys.shape[0] < 2:
+        return False
 
-    # Since exactly 4, indices 2 and 3 are safe
-    third_max_val = dC_chirp_full[peaks[2]]
-    fourth_max_val = dC_chirp_full[peaks[3]]
-    third_min_val = dC_chirp_full[valleys[2]]
-    fourth_min_val = dC_chirp_full[valleys[3]]
+    # Pair peaks and valleys to extract the intended p3/p4 and v3/v4 indices
+    p3_idx, p4_idx, v3_idx, v4_idx = _pair_peaks_valleys_by_last_cycles(dC_chirp_full, peaks, valleys)
+    if p3_idx == -1 or p4_idx == -1 or v3_idx == -1 or v4_idx == -1:
+        return False
 
-    return (np.abs(fourth_max_val - third_max_val) > safety_val and fourth_max_val > third_max_val and fourth_min_val > third_min_val) or \
-        (np.abs(fourth_min_val - third_min_val) > safety_val and fourth_min_val < third_min_val and fourth_max_val < third_max_val)
+    third_max_val = dC_chirp_full[p3_idx]
+    fourth_max_val = dC_chirp_full[p4_idx]
+    third_min_val = dC_chirp_full[v3_idx]
+    fourth_min_val = dC_chirp_full[v4_idx]
+
+    # Original directional safety logic (kept verbatim)
+    cond1 = (np.abs(fourth_max_val - third_max_val) > safety_val and
+             fourth_max_val > third_max_val and
+             fourth_min_val > third_min_val)
+    cond2 = (np.abs(fourth_min_val - third_min_val) > safety_val and
+             fourth_min_val < third_min_val and
+             fourth_max_val < third_max_val)
+
+    return cond1 or cond2
+
 
 @njit
 def compute_min_A(uncertainty: np.ndarray, A_start: float = 0.8,
-                         tol: float = 1e-3, max_A: float = 20.0) -> float:
+                  tol: float = 1e-3, max_A: float = 20.0) -> float:
     """
-    Find the minimal amplitude A such that compute_chirp_range_safe(uncertainty, A) is True.
+    Find the minimal amplitude A for which the chirp is considered unsafe.
 
-    Uses exponential bracketing followed by bisection on the monotonic function
-    f(A) = compute_chirp_range_safe(uncertainty, A).
+    The routine performs:
+      1. An initial check at ``A_start``. If already unsafe, return ``A_start``.
+      2. Exponential bracketing: double the amplitude until the safety test
+         ``compute_chirp_range_safe`` returns True or ``max_A`` is reached.
+      3. Bisection on the interval [A_low, A_high] until the width is <= ``tol``.
 
     Parameters
     ----------
     uncertainty : np.ndarray
-        Parameter uncertainty vector passed to the ODE solver.
+        Parameter uncertainty vector passed through to the ODE solver used by
+        ``compute_chirp_range_safe``.
     A_start : float, optional
-        Starting amplitude to test.
+        Initial amplitude to test. Must be > 0 in practice.
     tol : float, optional
-        Tolerance for bisection convergence.
+        Absolute tolerance for the final amplitude. The returned amplitude is
+        accurate within ``tol`` (the algorithm returns the upper bracket).
     max_A : float, optional
-        Maximum amplitude to consider; fallback if no True found.
+        Maximum amplitude to consider. If the bracket expansion reaches or
+        exceeds ``max_A`` without finding an unsafe amplitude, ``max_A`` is
+        returned as a conservative fallback.
 
     Returns
     -------
     float
-        Minimal amplitude A (up to tol) within [A_start, max_A] for which the safety function returns True.
+        Minimal amplitude A (to within ``tol``) in the interval
+        [``A_start``, ``max_A``] for which ``compute_chirp_range_safe`` returns True.
+        If ``compute_chirp_range_safe`` is already True at ``A_start``, returns
+        ``A_start``. If no unsafe amplitude is found up to ``max_A``, returns
+        ``max_A``.
 
     Notes
     -----
-    - Each evaluation calls the ODE solver; we should consider caching evaluations to reduce cost.
+    - Each evaluation of ``compute_chirp_range_safe`` typically calls the ODE
+      solver; this can be expensive. Consider caching results of
+      ``solve_ODE(uncertainty, A)`` externally if many repeated calls are
+      expected with the same arguments.
+    - The function assumes monotonicity of the boolean safety predicate with
+      respect to amplitude (i.e., once unsafe at some A, larger A remain
+      unsafe). This is the basis for safe bracketing + bisection.
     """
     A_low = A_start
     if compute_chirp_range_safe(uncertainty, A_low):
