@@ -198,3 +198,10 @@ err_sensitivity_per1000.0  0.010426  0.009839  0.000014  0.003726  0.008071  0.0
 ## Contributions
 Detailed function‑level behavior is documented in module docstrings.
 Pull requests, bug reports, and feature suggestions are welcome.
+
+---
+## AI Usage
+This description and documentation of the code were created mainly using LLMs. These were used also to speed up the implementation of algorithms from the references and ideas in iter.
+
+---
+## References
