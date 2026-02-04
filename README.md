@@ -201,7 +201,7 @@ Pull requests, bug reports, and feature suggestions are welcome.
 
 ---
 ## AI Usage
-This description and documentation of the code were created mainly using LLMs. These were used also to speed up the implementation of algorithms from the references and ideas in iter.
+This description and the documentation of the codes were created mainly using LLMs. These were also used to speed up the implementation of algorithms from the references and some ideas in iter.
 
 ---
 ## References
