@@ -205,7 +205,7 @@ This description and the documentation of the codes were created mainly using LL
 
 ---
 ## References
-```bibtex
+```
 @article{papakonstantinou2022scaled,
   title={A Scaled Spherical Simplex Filter (S3F) with a decreased n+ 2 sigma points set size and equivalent 2n+ 1 Unscented Kalman Filter (UKF) accuracy},
   author={Papakonstantinou, Konstantinos G and Amir, Mariyam and Warn, Gordon P},
@@ -268,6 +268,5 @@ This description and the documentation of the codes were created mainly using LL
   pages={153--158},
   year={2000},
   organization={Ieee}
-}
 ```
 
