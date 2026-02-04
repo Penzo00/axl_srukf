@@ -1,5 +1,5 @@
 # axl_srukf
-**Square‑Root Unscented Kalman Filter (SRUKF) for MEMS X‑Accelerometer Parameter Tracking**
+## **Square‑Root Unscented Kalman Filter (SRUKF) for MEMS X‑Accelerometer Parameter Tracking**
 A custom **Square‑Root Unscented Kalman Filter (SRUKF)** implementation designed for **MEMS X‑accelerometer sensitivity calibration**.
 The project estimates fabrication uncertainties such as **overetch beam**, **overetch electrodes**, **Q‑factor**, and **mechanical offset** using SRUKF tested on Monte Carlo simulations with truncated Gaussian distributions of the unknown parameters.
 The goal is to validate and refine parameter tracking in MEMS devices through robust numerical methods and reproducible workflows, obtaining the best possible results in a fast way.
