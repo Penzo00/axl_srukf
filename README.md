@@ -2,27 +2,22 @@
 **Square‑Root Unscented Kalman Filter (SRUKF) for MEMS X‑Accelerometer Parameter Tracking**
 
 A custom **Square‑Root Unscented Kalman Filter (SRUKF)** implementation designed for **MEMS X‑accelerometer sensitivity calibration**.  
-The project estimates key fabrication parameters — including **overetch beam**, **overetch electrodes**, **Q‑factor**, and **mechanical offset** — using:
+The project estimates fabrication uncertainties such as **overetch beam**, **overetch electrodes**, **Q‑factor**, and **mechanical offset** using SRUKF tested on Monte Carlo simulations using truncated Gaussian distributions of the unknown parameters. 
 
-- Monte Carlo simulations  
-- Numba‑accelerated signal‑processing utilities  
-- Diagnostic and statistical analysis  
-- Physical modeling and noise‑aware measurement functions  
-
-The goal is to validate and refine parameter tracking in MEMS devices through robust numerical methods and reproducible workflows.
+The goal is to validate and refine parameter tracking in MEMS devices through robust numerical methods and reproducible workflows, obtaining the best possible results in a fast way.
 
 ---
 
 ## Overview
 
 The system implements a **6‑dimensional SRUKF** with **scalar capacitance‑difference measurements**.  
-It simulates MEMMS dynamics under chirp excitation, injects realistic noise, and performs iterative estimation to converge on fabrication parameters.
+It simulates MEMS dynamics under chirp excitation, injects realistic noise, and performs iterative estimation to converge on fabrication parameters.
 
 Monte Carlo runs provide statistical validation, while utilities ensure numerical stability (square‑root filtering, eigenvalue flooring, constrained gains).
 
 ### Key Features
 
-- **Advanced SRUKF mechanisms**: GMCC iterations, STF adaptation, constrained Kalman gains, square‑root covariance propagation.
+- **Advanced SRUKF mechanisms**: Generalized Maximum Correntropy Criterion iterations, Strong Tracking Factor adaptation, constrained Kalman gains, square‑root covariance propagation.
 - **Monte Carlo validation** for robustness and statistical confidence.
 - **Diagnostic plots** and extended statistical summaries.
 - **Configurable hyperparameters** for frequencies, durations, noise levels, tolerances.
@@ -113,7 +108,7 @@ pip install numpy scipy pandas matplotlib seaborn numba tqdm
 Clone and run directly (no setup.py required):
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Penzo00/axl_srukf
 cd axl_srukf
 python main.py
 ```
