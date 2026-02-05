@@ -150,31 +150,110 @@ SAMPLES_DIR/ # Timestamped Monte Carlo sample archives (.npz)
 - Measurement dimension fixed to scalar ΔC
 ---
 ## Benchmark Results (1000 Monte Carlo Runs)
-**Date:** 2026-02-04 20:21:04
-
-### Statistical Figures
+### Statistical Results
+**With all the features**
 ```
-                      count      mean       std       min       25%       50%       75%       max      skew  kurtosis    median       mad
-est_stiff          1000.0  0.346135  0.088447  0.152095  0.279475  0.344934  0.412478  0.547335  0.018130 -0.723386  0.344934  0.073232
-est_elec           1000.0  0.349986  0.085814  0.150314  0.288831  0.350918  0.412407  0.550057  0.002270 -0.577543  0.350918  0.070216
-est_Q              1000.0  0.499997  0.044481  0.400138  0.466786  0.500963  0.533059  0.599792  0.020773 -0.759926  0.500963  0.036974
-est_offset         1000.0 -0.002353  0.087956 -0.197547 -0.066651 -0.000472  0.064330  0.198526 -0.012287 -0.666873 -0.000472  0.072794
-est_sensitivity    1000.0  5.065889  1.645247  2.060547  3.868755  4.785103  5.993825 13.215268  0.925159  1.070808  4.785103  1.297251
-err_stiff_norm     1000.0  0.020348  0.022392  0.000010  0.006544  0.014506  0.026074  0.223296  3.440448 19.448481  0.014506  0.014641
-err_elec_norm      1000.0  0.029039  0.028989  0.000021  0.009624  0.021085  0.039446  0.297259  2.792552 13.937414  0.021085  0.020115
-err_Q_norm         1000.0  0.059817  0.057315  0.000031  0.022914  0.045331  0.076575  0.490194  2.607790 10.683526  0.045331  0.039166
-err_offset_norm    1000.0  0.006777  0.006195  0.000019  0.002479  0.005306  0.009413  0.060429  2.449260 11.155912  0.005306  0.004412
-err_sensitivity_per1000.0  0.010426  0.009839  0.000014  0.003726  0.008071  0.013846  0.069958  2.233295  7.279996  0.008071  0.006916
-```
-<img width="2312" height="1736" alt="error_boxplots_20260204_200917" src="https://github.com/user-attachments/assets/4d7ca9b1-695a-4d55-9913-e9dfdbacdbda" />
-<img width="1683" height="1401" alt="sensitivity_true_vs_est_20260204_200917" src="https://github.com/user-attachments/assets/0b911fd6-1269-4739-b89a-dd3076f5b54e" />
-<img width="2017" height="1093" alt="worst_20260204_200917_model_fit" src="https://github.com/user-attachments/assets/aaa0cee4-f7b1-4103-9659-bbfb2385487c" /><img width="2779" height="3182" alt="worst_20260204_200917_params_states" src="https://github.com/user-attachments/assets/19fea595-75c7-4074-ac01-a7f2df9d0cb3" />
-<img width="2011" height="1093" alt="best_20260204_200917_model_fit" src="https://github.com/user-attachments/assets/7f478145-470b-42a5-9aed-aec9df1f6e10" /><img width="2779" height="3182" alt="best_20260204_200917_params_states" src="https://github.com/user-attachments/assets/5d5ba963-3d9b-4c84-bab5-b155d84acd87" />
+                      count      mean       std       min       25%       50%       75%        max      skew   kurtosis    median       mad
+est_stiff            1000.0  0.346135  0.088447  0.152095  0.279475  0.344934  0.412478   0.547335  0.018130  -0.723386  0.344934  0.073232
+est_elec             1000.0  0.349986  0.085814  0.150314  0.288831  0.350918  0.412407   0.550057  0.002270  -0.577543  0.350918  0.070216
+est_Q                1000.0  0.499997  0.044481  0.400138  0.466786  0.500963  0.533059   0.599792  0.020773  -0.759926  0.500963  0.036974
+est_offset           1000.0 -0.002353  0.087956 -0.197547 -0.066651 -0.000472  0.064330   0.198526 -0.012287  -0.666873 -0.000472  0.072794
+est_sensitivity      1000.0  5.065889  1.645247  2.060547  3.868755  4.785103  5.993825  13.215268  0.925159   1.070808  4.785103  1.297251
+err_stiff_norm       1000.0  0.020348  0.022392  0.000010  0.006544  0.014506  0.026074   0.223296  3.440448  19.448481  0.014506  0.014641
+err_elec_norm        1000.0  0.029039  0.028989  0.000021  0.009624  0.021085  0.039446   0.297259  2.792552  13.937414  0.021085  0.020115
+err_Q_norm           1000.0  0.059817  0.057315  0.000031  0.022914  0.045331  0.076575   0.490194  2.607790  10.683526  0.045331  0.039166
+err_offset_norm      1000.0  0.006777  0.006195  0.000019  0.002479  0.005306  0.009413   0.060429  2.449260  11.155912  0.005306  0.004412
+err_sensitivity_per  1000.0  0.010426  0.009839  0.000014  0.003726  0.008071  0.013846   0.069958  2.233295   7.279996  0.008071  0.006916
 
-<img width="1993" height="1402" alt="sampled_over_electrode_distribution_20260204_200917" src="https://github.com/user-attachments/assets/7d86b736-1f0b-4f65-8510-5a25fbbbf90c" />
-<img width="1993" height="1401" alt="sampled_Q_distribution_20260204_200917" src="https://github.com/user-attachments/assets/fb797190-9574-440b-956a-8e1b96a14056" />
-<img width="1993" height="1401" alt="sampled_offset_distribution_20260204_200917" src="https://github.com/user-attachments/assets/31660d66-707c-488d-a058-c601cd7a48d5" />
-<img width="1993" height="1402" alt="sampled_over_stiffness_distribution_20260204_200917" src="https://github.com/user-attachments/assets/45c98a8e-2848-4104-bb21-744cbebf468c" />
+Mean runtime per run (parallel): 0.7085 seconds
+```
+**No perturbated Jacobian (approximation instead)**
+```
+                      count      mean       std       min       25%       50%       75%        max      skew   kurtosis    median       mad
+est_stiff            1000.0  0.346135  0.088446  0.152096  0.279475  0.344942  0.412476   0.547335  0.018120  -0.723389  0.344942  0.073231
+est_elec             1000.0  0.349987  0.085811  0.150285  0.288825  0.350917  0.412406   0.550053  0.002272  -0.577539  0.350917  0.070214
+est_Q                1000.0  0.499998  0.044480  0.400148  0.466782  0.500960  0.533060   0.599790  0.020779  -0.759932  0.500960  0.036974
+est_offset           1000.0 -0.002353  0.087956 -0.197550 -0.066650 -0.000472  0.064330   0.198527 -0.012279  -0.666884 -0.000472  0.072794
+est_sensitivity      1000.0  5.065886  1.645241  2.060550  3.868784  4.785105  5.993829  13.215334  0.925159   1.070838  4.785105  1.297248
+err_stiff_norm       1000.0  0.020412  0.022632  0.000008  0.006655  0.014332  0.025965   0.225500  3.529547  20.428722  0.014332  0.014700
+err_elec_norm        1000.0  0.029131  0.029352  0.000170  0.009524  0.021450  0.039102   0.297015  2.900841  14.910783  0.021450  0.020199
+err_Q_norm           1000.0  0.059825  0.057634  0.000002  0.023124  0.044753  0.076866   0.483688  2.627925  10.720974  0.044753  0.039366
+err_offset_norm      1000.0  0.006767  0.006242  0.000015  0.002424  0.005266  0.009407   0.062185  2.499504  11.751538  0.005266  0.004441
+err_sensitivity_per  1000.0  0.010443  0.009828  0.000016  0.003743  0.008060  0.013853   0.069831  2.217827   7.121649  0.008060  0.006917
+
+Mean runtime per run (parallel): 0.7624 seconds
+```
+Given the results, perturbated Jacobian will be always used.
+**No Kalman gain constraints**
+```
+                      count      mean       std       min       25%       50%       75%        max      skew   kurtosis    median       mad
+est_stiff            1000.0  0.346135  0.088446  0.152096  0.279475  0.344942  0.412476   0.547335  0.018120  -0.723389  0.344942  0.073231
+est_elec             1000.0  0.349987  0.085811  0.150285  0.288825  0.350917  0.412406   0.550053  0.002272  -0.577539  0.350917  0.070214
+est_Q                1000.0  0.499998  0.044480  0.400148  0.466782  0.500960  0.533060   0.599790  0.020779  -0.759932  0.500960  0.036974
+est_offset           1000.0 -0.002353  0.087956 -0.197550 -0.066650 -0.000472  0.064330   0.198527 -0.012279  -0.666884 -0.000472  0.072794
+est_sensitivity      1000.0  5.065886  1.645241  2.060550  3.868784  4.785105  5.993829  13.215334  0.925159   1.070838  4.785105  1.297248
+err_stiff_norm       1000.0  0.020412  0.022632  0.000008  0.006655  0.014332  0.025965   0.225500  3.529547  20.428722  0.014332  0.014700
+err_elec_norm        1000.0  0.029131  0.029352  0.000170  0.009524  0.021450  0.039102   0.297015  2.900841  14.910783  0.021450  0.020199
+err_Q_norm           1000.0  0.059825  0.057634  0.000002  0.023124  0.044753  0.076866   0.483688  2.627925  10.720974  0.044753  0.039366
+err_offset_norm      1000.0  0.006767  0.006242  0.000015  0.002424  0.005266  0.009407   0.062185  2.499504  11.751538  0.005266  0.004441
+err_sensitivity_per  1000.0  0.010443  0.009828  0.000016  0.003743  0.008060  0.013853   0.069831  2.217827   7.121649  0.008060  0.006917
+```
+Given the results, Kalman gain constraints will be always used.
+
+## Samples distributions
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/6b99a464-1feb-49a3-ab22-3a52e6936672" width="48%" />
+  <img src="https://github.com/user-attachments/assets/528325dc-ce1c-4b0a-b567-0fa9921fa1ef" width="48%" />
+</p>
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/a393c71d-1c0b-4cc1-b0b7-74a3e15fe699" width="48%" />
+  <img src="https://github.com/user-attachments/assets/8c1bbd7c-cb0e-414b-9e90-36b312ec0515" width="48%" />
+</p>
+---
+## Best Case Results
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/dd306cb6-fca6-4420-b8ea-72b81209d874" width="48%" />
+  <img src="https://github.com/user-attachments/assets/ee2a88a4-ff77-477d-abd3-35ddb8b878a7" width="48%" />
+</p>
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/fc764cca-b57a-4a42-8180-6553a748c70e" width="48%" />
+  <img src="https://github.com/user-attachments/assets/864ac454-6181-4c19-bba2-5e836c026120" width="48%" />
+  <img src="https://github.com/user-attachments/assets/da15b22a-9c05-43ad-a143-401512ea46b2" width="48%" />
+</p>
+---
+## Worst Case Results
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/c3ee5cb0-7982-49b0-9558-25cc48283645" width="48%" />
+  <img src="https://github.com/user-attachments/assets/889d920e-5bf9-42c0-ae35-e5866aaf72fb" width="48%" />
+  <img src="https://github.com/user-attachments/assets/0622bdff-5ff9-4a80-a9ad-a406f20aba2d" width="48%" />
+</p>
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/863437bf-70b2-43d6-9b5c-f1d38d446e6f" width="48%" />
+  <img src="https://github.com/user-attachments/assets/7b2249b9-f1fe-4e62-abe7-8968a48a1282" width="48%" />
+</p>
+---
+## Sensitivity Errors and Minimum Voltage Distributions
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/e41f230f-7da9-4671-9c83-6b5688bc8c06" width="48%" />
+  <img src="https://github.com/user-attachments/assets/bc502f1f-c3dd-475a-80a7-086c921f60af" width="48%" />
+</p>
+---
+## Peaks and Valleys Distributions
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/e0b0ae36-a8f3-4a02-ad69-31cc74aa1fce" width="48%" />
+  <img src="https://github.com/user-attachments/assets/7a7f7e5c-86c2-4de9-998a-7debc1f7f69b" width="48%" />
+</p>
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/a8a22abb-e5bf-4bed-824d-6ee82162951a" width="48%" />
+  <img src="https://github.com/user-attachments/assets/28c74281-e3d2-4f09-b322-6206a3f884a7" width="48%" />
+</p>
+---
+## Boxplots and Scatter Plot
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/a10b1594-1a3f-49f1-b571-5f651120859a" width="48%" />
+  <img src="https://github.com/user-attachments/assets/63e588a6-f1df-43ee-8063-98920530d864" width="48%" />
+</p>
+
 
 
 ### Additional Statistics
