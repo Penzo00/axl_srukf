@@ -203,69 +203,40 @@ Mean runtime per run (parallel): 1.4711 seconds
 Given the results, Kalman gain constraints will be always used. Moreover, deactivating the adaptive noises or the GMCC or the fading factor resulted in a non positive definite covariance. This is probably a bug, but given the values we are achieving, it is meaningless fixing.
 
 ## Samples distributions
-<p float="left">
-<img src="https://github.com/user-attachments/assets/6b99a464-1feb-49a3-ab22-3a52e6936672" width="48%" />
-<img src="https://github.com/user-attachments/assets/528325dc-ce1c-4b0a-b567-0fa9921fa1ef" width="48%" />
-</p>
-<p float="left">
-<img src="https://github.com/user-attachments/assets/a393c71d-1c0b-4cc1-b0b7-74a3e15fe699" width="48%" />
-<img src="https://github.com/user-attachments/assets/8c1bbd7c-cb0e-414b-9e90-36b312ec0515" width="48%" />
-</p>
+<img width="1993" height="1402" alt="sampled_over_stiffness_distribution_20260205_083112" src="https://github.com/user-attachments/assets/de8d5671-e44a-4a3d-be4c-82270a8703ac" />
+<img width="1993" height="1402" alt="sampled_over_electrode_distribution_20260205_083112" src="https://github.com/user-attachments/assets/acefddb5-f60e-419d-b6cb-4f1bacb3402f" />
+<img width="1993" height="1401" alt="sampled_Q_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a7ce5217-ea75-4236-ac4d-4faf61995d25" />
+<img width="1993" height="1401" alt="sampled_offset_distribution_20260205_083112" src="https://github.com/user-attachments/assets/0fe3882d-754d-4faf-ada0-f95d8e55495a" />
+
 
 ## Best Case Results
-<p float="left">
-<img src="https://github.com/user-attachments/assets/dd306cb6-fca6-4420-b8ea-72b81209d874" width="48%" />
-<img src="https://github.com/user-attachments/assets/ee2a88a4-ff77-477d-abd3-35ddb8b878a7" width="48%" />
-</p>
-
-<p float="left">
-<img src="https://github.com/user-attachments/assets/fc764cca-b57a-4a42-8180-6553a748c70e" width="48%" />
-<img src="https://github.com/user-attachments/assets/864ac454-6181-4c19-bba2-5e836c026120" width="48%" />
-</p>
-
-<p align="center">
-<img src="https://github.com/user-attachments/assets/da15b22a-9c05-43ad-a143-401512ea46b2" width="48%" />
-</p>
+<img width="1701" height="1093" alt="best_20260205_083112_noisy_deltaC" src="https://github.com/user-attachments/assets/f957c402-8726-483e-b652-cea4c76c8802" />
+<img width="1689" height="1093" alt="best_20260205_083112_voltage_history" src="https://github.com/user-attachments/assets/a7c57f1c-39f6-43b0-b6a8-e13c5f8594b0" />
+<img width="2779" height="3182" alt="best_20260205_083112_params_states" src="https://github.com/user-attachments/assets/75b98688-b5d2-4fa9-a2ee-2ba36586731f" />
+<img width="1751" height="1093" alt="best_20260205_083112_error_convergence" src="https://github.com/user-attachments/assets/2c6289f6-a577-42e0-b6c0-a18f78063e45" />
+<img width="2011" height="1093" alt="best_20260205_083112_model_fit" src="https://github.com/user-attachments/assets/6c934914-4097-48e9-8a18-f3e104f4e407" />
 
 ## Worst Case Results
-<p float="left">
-<img src="https://github.com/user-attachments/assets/c3ee5cb0-7982-49b0-9558-25cc48283645" width="48%" />
-<img src="https://github.com/user-attachments/assets/889d920e-5bf9-42c0-ae35-e5866aaf72fb" width="48%" />
-</p>
+<img width="2017" height="1093" alt="worst_20260205_083112_model_fit" src="https://github.com/user-attachments/assets/a39b45f1-347f-4728-8d3d-37190be0c142" />
+<img width="1707" height="1093" alt="worst_20260205_083112_noisy_deltaC" src="https://github.com/user-attachments/assets/67a511d2-2506-4929-beff-b696cf5b801d" />
+<img width="1689" height="1093" alt="worst_20260205_083112_voltage_history" src="https://github.com/user-attachments/assets/52564b17-1ca2-42fc-8259-0c7c3a5881ba" />
+<img width="2779" height="3182" alt="worst_20260205_083112_params_states" src="https://github.com/user-attachments/assets/d24a6308-731e-466e-ba7e-85341b02849d" />
+<img width="1768" height="1093" alt="worst_20260205_083112_error_convergence" src="https://github.com/user-attachments/assets/fd11fb79-2150-4461-90fd-f86b92eecf2f" />
 
-<p align="center">
-<img src="https://github.com/user-attachments/assets/0622bdff-5ff9-4a80-a9ad-a406f20aba2d" width="48%" />
-</p>
-
-<p float="left">
-<img src="https://github.com/user-attachments/assets/863437bf-70b2-43d6-9b5c-f1d38d446e6f" width="48%" />
-<img src="https://github.com/user-attachments/assets/7b2249b9-f1fe-4e62-abe7-8968a48a1282" width="48%" />
-</p>
 
 ## Sensitivity Errors and Minimum Voltage Distributions
-<p float="left">
-<img src="https://github.com/user-attachments/assets/e41f230f-7da9-4671-9c83-6b5688bc8c06" width="48%" />
-<img src="https://github.com/user-attachments/assets/bc502f1f-c3dd-475a-80a7-086c921f60af" width="48%" />
-</p>
+<img width="2011" height="1401" alt="sensitivity_error_distribution_20260205_083112" src="https://github.com/user-attachments/assets/df7e0767-fd0f-4dd7-8bdf-2fefa3499960" />
+<img width="1993" height="1401" alt="min_voltage_distribution_20260205_083112" src="https://github.com/user-attachments/assets/13d61f2f-5162-4a69-9659-260c5f691795" />
 
 ## Peaks and Valleys Distributions
-<p float="left">
-<img src="https://github.com/user-attachments/assets/e0b0ae36-a8f3-4a02-ad69-31cc74aa1fce" width="48%" />
-<img src="https://github.com/user-attachments/assets/7a7f7e5c-86c2-4de9-998a-7debc1f7f69b" width="48%" />
-</p>
-
-<p float="left">
-<img src="https://github.com/user-attachments/assets/a8a22abb-e5bf-4bed-824d-6ee82162951a" width="48%" />
-<img src="https://github.com/user-attachments/assets/28c74281-e3d2-4f09-b322-6206a3f884a7" width="48%" />
-</p>
+<img width="2014" height="1401" alt="third_peak_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/74897b0f-14fc-4fd9-8e71-f6ed6131e06d" />
+<img width="2011" height="1401" alt="fourth_peak_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a1b910cb-917a-43f8-aa9e-62f629b2b778" />
+<img width="2018" height="1401" alt="third_valley_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a3e26531-3394-4a98-a3d7-02219f7f6725" />
+<img width="2011" height="1401" alt="fourth_valley_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/c98b32a1-8f4f-45f4-bf92-df0e72e5a03e" />
 
 ## Boxplots and Scatter Plot
-<p float="left">
-<img src="https://github.com/user-attachments/assets/a10b1594-1a3f-49f1-b571-5f651120859a" width="48%" />
-<img src="https://github.com/user-attachments/assets/63e588a6-f1df-43ee-8063-98920530d864" width="48%" />
-</p>
-
-
+<img width="2312" height="1736" alt="error_boxplots_20260205_083112" src="https://github.com/user-attachments/assets/edffd461-2eac-41dd-bbe8-06d9f9024c7c" />
+<img width="1683" height="1401" alt="sensitivity_true_vs_est_20260205_083112" src="https://github.com/user-attachments/assets/c78fc0be-15d8-4a6d-b4e7-e15309ef98c8" />
 
 ### Additional Statistics
 - **Success rate:** 100.00%
