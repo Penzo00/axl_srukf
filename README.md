@@ -208,7 +208,7 @@ Given the results, Kalman gain constraints will be always used. Moreover, deacti
 <img width="1993" height="1401" alt="sampled_Q_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a7ce5217-ea75-4236-ac4d-4faf61995d25" />
 <img width="1993" height="1401" alt="sampled_offset_distribution_20260205_083112" src="https://github.com/user-attachments/assets/0fe3882d-754d-4faf-ada0-f95d8e55495a" />
 
-
+---
 ## Best Case Results
 <img width="1701" height="1093" alt="best_20260205_083112_noisy_deltaC" src="https://github.com/user-attachments/assets/f957c402-8726-483e-b652-cea4c76c8802" />
 <img width="1689" height="1093" alt="best_20260205_083112_voltage_history" src="https://github.com/user-attachments/assets/a7c57f1c-39f6-43b0-b6a8-e13c5f8594b0" />
@@ -216,6 +216,7 @@ Given the results, Kalman gain constraints will be always used. Moreover, deacti
 <img width="1751" height="1093" alt="best_20260205_083112_error_convergence" src="https://github.com/user-attachments/assets/2c6289f6-a577-42e0-b6c0-a18f78063e45" />
 <img width="2011" height="1093" alt="best_20260205_083112_model_fit" src="https://github.com/user-attachments/assets/6c934914-4097-48e9-8a18-f3e104f4e407" />
 
+---
 ## Worst Case Results
 <img width="2017" height="1093" alt="worst_20260205_083112_model_fit" src="https://github.com/user-attachments/assets/a39b45f1-347f-4728-8d3d-37190be0c142" />
 <img width="1707" height="1093" alt="worst_20260205_083112_noisy_deltaC" src="https://github.com/user-attachments/assets/67a511d2-2506-4929-beff-b696cf5b801d" />
@@ -223,17 +224,19 @@ Given the results, Kalman gain constraints will be always used. Moreover, deacti
 <img width="2779" height="3182" alt="worst_20260205_083112_params_states" src="https://github.com/user-attachments/assets/d24a6308-731e-466e-ba7e-85341b02849d" />
 <img width="1768" height="1093" alt="worst_20260205_083112_error_convergence" src="https://github.com/user-attachments/assets/fd11fb79-2150-4461-90fd-f86b92eecf2f" />
 
-
+---
 ## Sensitivity Errors and Minimum Voltage Distributions
 <img width="2011" height="1401" alt="sensitivity_error_distribution_20260205_083112" src="https://github.com/user-attachments/assets/df7e0767-fd0f-4dd7-8bdf-2fefa3499960" />
 <img width="1993" height="1401" alt="min_voltage_distribution_20260205_083112" src="https://github.com/user-attachments/assets/13d61f2f-5162-4a69-9659-260c5f691795" />
 
+---
 ## Peaks and Valleys Distributions
 <img width="2014" height="1401" alt="third_peak_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/74897b0f-14fc-4fd9-8e71-f6ed6131e06d" />
 <img width="2011" height="1401" alt="fourth_peak_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a1b910cb-917a-43f8-aa9e-62f629b2b778" />
 <img width="2018" height="1401" alt="third_valley_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a3e26531-3394-4a98-a3d7-02219f7f6725" />
 <img width="2011" height="1401" alt="fourth_valley_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/c98b32a1-8f4f-45f4-bf92-df0e72e5a03e" />
 
+---
 ## Boxplots and Scatter Plot
 <img width="2312" height="1736" alt="error_boxplots_20260205_083112" src="https://github.com/user-attachments/assets/edffd461-2eac-41dd-bbe8-06d9f9024c7c" />
 <img width="1683" height="1401" alt="sensitivity_true_vs_est_20260205_083112" src="https://github.com/user-attachments/assets/c78fc0be-15d8-4a6d-b4e7-e15309ef98c8" />
