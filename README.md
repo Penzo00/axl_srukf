@@ -252,9 +252,9 @@ Given the results, Kalman gain constraints will be always used. Moreover, deacti
 - err_offset_norm: 0.0053 ± 0.0044 %
 - err_sensitivity_per: 0.0081 ± 0.0069 %
 
-### Timing and Other Per-Run Statistics
-- **Mean runtime per run (parallel execution):** 0.6980 seconds
-- **Serial per-run time statistics:** mean 16.45 s, std 7.75 s, median 14.94 s
+### Timing and Other Per-Run Statistics (First Run)
+- **Mean runtime per run (parallel execution):** 0.7085 seconds
+- **Serial per-run time statistics:** mean 16.48 s, std 7.94 s, median 15.1 s
 
 **Hardware:** Intel® Core™ i9-12900F (Alder Lake, Socket LGA 1700, 10 nm, 8 Performance + 8 Efficient cores, 24 threads, 30 MB L3 cache, base TDP 65 W).
 
