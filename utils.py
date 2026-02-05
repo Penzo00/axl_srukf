@@ -660,11 +660,6 @@ def _select_peaks(sm: np.ndarray, cand: np.ndarray,
     kept = _suppress_peaks_greedy(peaks_arr, vals_arr, min_distance)
     return kept
 
-
-# -----------------------
-# Public functions (names preserved)
-# -----------------------
-
 @njit
 def find_peaks_1d(signal: np.ndarray) -> np.ndarray:
     """
@@ -928,11 +923,9 @@ def compute_chirp_range_safe(uncertainty: np.ndarray, A: float,
     fourth_min_val = dC_chirp_full[v4_idx]
 
     # Original directional safety logic (kept verbatim)
-    cond1 = (np.abs(fourth_max_val - third_max_val) > safety_val and
-             fourth_max_val > third_max_val and
+    cond1 = (fourth_max_val > third_max_val + safety_val and
              fourth_min_val > third_min_val)
-    cond2 = (np.abs(fourth_min_val - third_min_val) > safety_val and
-             fourth_min_val < third_min_val and
+    cond2 = (fourth_min_val < third_min_val - safety_val and
              fourth_max_val < third_max_val)
 
     return cond1 or cond2
