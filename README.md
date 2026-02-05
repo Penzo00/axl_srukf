@@ -209,7 +209,7 @@ Given the results, Kalman gain constraints will be always used.
   <img src="https://github.com/user-attachments/assets/a393c71d-1c0b-4cc1-b0b7-74a3e15fe699" width="48%" />
   <img src="https://github.com/user-attachments/assets/8c1bbd7c-cb0e-414b-9e90-36b312ec0515" width="48%" />
 </p>
----
+
 ## Best Case Results
 <p float="left">
   <img src="https://github.com/user-attachments/assets/dd306cb6-fca6-4420-b8ea-72b81209d874" width="48%" />
@@ -218,20 +218,24 @@ Given the results, Kalman gain constraints will be always used.
 <p float="left">
   <img src="https://github.com/user-attachments/assets/fc764cca-b57a-4a42-8180-6553a748c70e" width="48%" />
   <img src="https://github.com/user-attachments/assets/864ac454-6181-4c19-bba2-5e836c026120" width="48%" />
+</p>
+<p align="center">
   <img src="https://github.com/user-attachments/assets/da15b22a-9c05-43ad-a143-401512ea46b2" width="48%" />
 </p>
----
+
 ## Worst Case Results
 <p float="left">
   <img src="https://github.com/user-attachments/assets/c3ee5cb0-7982-49b0-9558-25cc48283645" width="48%" />
   <img src="https://github.com/user-attachments/assets/889d920e-5bf9-42c0-ae35-e5866aaf72fb" width="48%" />
+</p>
+<p align="center">
   <img src="https://github.com/user-attachments/assets/0622bdff-5ff9-4a80-a9ad-a406f20aba2d" width="48%" />
 </p>
 <p float="left">
   <img src="https://github.com/user-attachments/assets/863437bf-70b2-43d6-9b5c-f1d38d446e6f" width="48%" />
   <img src="https://github.com/user-attachments/assets/7b2249b9-f1fe-4e62-abe7-8968a48a1282" width="48%" />
 </p>
----
+
 ## Sensitivity Errors and Minimum Voltage Distributions
 <p float="left">
   <img src="https://github.com/user-attachments/assets/e41f230f-7da9-4671-9c83-6b5688bc8c06" width="48%" />
@@ -247,7 +251,7 @@ Given the results, Kalman gain constraints will be always used.
   <img src="https://github.com/user-attachments/assets/a8a22abb-e5bf-4bed-824d-6ee82162951a" width="48%" />
   <img src="https://github.com/user-attachments/assets/28c74281-e3d2-4f09-b322-6206a3f884a7" width="48%" />
 </p>
----
+
 ## Boxplots and Scatter Plot
 <p float="left">
   <img src="https://github.com/user-attachments/assets/a10b1594-1a3f-49f1-b571-5f651120859a" width="48%" />
