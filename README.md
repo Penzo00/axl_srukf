@@ -315,5 +315,14 @@ This description and the documentation of the codes were created mainly using LL
   pages={153--158},
   year={2000},
   organization={Ieee}
+@article{zacchei2024neural,
+  title={Neural networks based surrogate modeling for efficient uncertainty quantification and calibration of MEMS accelerometers},
+  author={Zacchei, Filippo and Rizzini, Francesco and Gattere, Gabriele and Frangi, Attilio and Manzoni, Andrea},
+  journal={International Journal of Non-Linear Mechanics},
+  volume={167},
+  pages={104902},
+  year={2024},
+  publisher={Elsevier}
+}
 ```
 
