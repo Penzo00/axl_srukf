@@ -71,7 +71,7 @@ import seaborn as sns
 from scipy.signal import chirp
 from scipy.stats import truncnorm
 from tqdm import tqdm
-from config import UKFConfig, logger, total_duration, _step, dur_chirp, f_end, f_start
+from config import UKFConfig, logger, total_duration, _step, dur_chirp, f_end, f_start, min_eig_floor
 from utils import compute_min_A, compute_stats, find_peaks_1d, find_valleys_1d, sens_jacobian
 from model import solve_ODE_disp, solve_ODE, compute_static_sensitivity
 from tracker import ParameterTracker
@@ -325,12 +325,10 @@ def run_single_mc_simulation(run_id: int, true_params: np.ndarray) -> dict:
             # Get parameter estimates from current and previous iteration
             current_params = final_estimate[:4]
 
-            # Calculate relative changes for each parameter
+            # Calculate relative changes for each parameter, handling near-zero parameters
             rel_changes = np.abs((current_params - prev_params) / prev_params)
-            # Handle near-zero parameters
-            for i in range(4):
-                if abs(prev_params[i]) < 1e-12:
-                    rel_changes[i] = abs(current_params[i] - prev_params[i])
+            mask = np.abs(prev_params) < min_eigen_floor
+            rel_changes[mask] = np.abs(current_params[mask] - prev_params[mask])
 
             # Check if all parameters have converged
             if np.all(rel_changes < CONVERGENCE_THRESHOLD):
@@ -761,4 +759,5 @@ def main_monte_carlo() -> Tuple[pd.DataFrame, pd.DataFrame]:
     plt.close()
     print(f"All diagnostic plots saved in: {PLOTS_DIR}")
     print("\nMonte Carlo validation completed successfully!")
+
     return df, stats
