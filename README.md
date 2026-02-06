@@ -1,6 +1,5 @@
 # axl_srukf
 ---
-## Square‑Root Unscented Kalman Filter (SRUKF) for MEMS X‑Accelerometer Parameter Tracking
 A custom **Square‑Root Unscented Kalman Filter (SRUKF)** implementation designed for **MEMS X‑accelerometer sensitivity calibration**.
 The project estimates fabrication uncertainties such as **overetch beam**, **overetch electrodes**, **Q‑factor**, and **mechanical offset** using SRUKF tested on Monte Carlo simulations with truncated Gaussian distributions of the unknown parameters.
 The goal is to validate and refine parameter tracking in MEMS devices through robust numerical methods and reproducible workflows, obtaining the best possible results in a fast way.
@@ -203,43 +202,27 @@ Mean runtime per run (parallel): 1.4711 seconds
 Given the results, Kalman gain constraints will be always used. Moreover, deactivating the adaptive noises or the GMCC or the fading factor resulted in a non positive definite covariance. This is probably a bug, but given the values we are achieving, it is meaningless fixing.
 
 ## Samples distributions
-<img width="1993" height="1402" alt="sampled_over_stiffness_distribution_20260205_083112" src="https://github.com/user-attachments/assets/de8d5671-e44a-4a3d-be4c-82270a8703ac" />
-<img width="1993" height="1402" alt="sampled_over_electrode_distribution_20260205_083112" src="https://github.com/user-attachments/assets/acefddb5-f60e-419d-b6cb-4f1bacb3402f" />
-<img width="1993" height="1401" alt="sampled_Q_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a7ce5217-ea75-4236-ac4d-4faf61995d25" />
-<img width="1993" height="1401" alt="sampled_offset_distribution_20260205_083112" src="https://github.com/user-attachments/assets/0fe3882d-754d-4faf-ada0-f95d8e55495a" />
+<div align="center"> <img src="https://github.com/user-attachments/assets/de8d5671-e44a-4a3d-be4c-82270a8703ac" width="48%" /> <img src="https://github.com/user-attachments/assets/acefddb5-f60e-419d-b6cb-4f1bacb3402f" width="48%" /> </div> <div align="center"> <img src="https://github.com/user-attachments/assets/a7ce5217-ea75-4236-ac4d-4faf61995d25" width="48%" /> <img src="https://github.com/user-attachments/assets/0fe3882d-754d-4faf-ada0-f95d8e55495a" width="48%" /> </div>
 
 ---
 ## Best Case Results
-<img width="1701" height="1093" alt="best_20260205_083112_noisy_deltaC" src="https://github.com/user-attachments/assets/f957c402-8726-483e-b652-cea4c76c8802" />
-<img width="1689" height="1093" alt="best_20260205_083112_voltage_history" src="https://github.com/user-attachments/assets/a7c57f1c-39f6-43b0-b6a8-e13c5f8594b0" />
-<img width="2779" height="3182" alt="best_20260205_083112_params_states" src="https://github.com/user-attachments/assets/75b98688-b5d2-4fa9-a2ee-2ba36586731f" />
-<img width="1751" height="1093" alt="best_20260205_083112_error_convergence" src="https://github.com/user-attachments/assets/2c6289f6-a577-42e0-b6c0-a18f78063e45" />
-<img width="2011" height="1093" alt="best_20260205_083112_model_fit" src="https://github.com/user-attachments/assets/6c934914-4097-48e9-8a18-f3e104f4e407" />
+<div align="center"> <img src="https://github.com/user-attachments/assets/f957c402-8726-483e-b652-cea4c76c8802" width="48%" /> <img src="https://github.com/user-attachments/assets/a7c57f1c-39f6-43b0-b6a8-e13c5f8594b0" width="48%" /> </div> <div align="center"> <img src="https://github.com/user-attachments/assets/75b98688-b5d2-4fa9-a2ee-2ba36586731f" width="48%" /> <img src="https://github.com/user-attachments/assets/2c6289f6-a577-42e0-b6c0-a18f78063e45" width="48%" /> </div> <div align="center"> <img src="https://github.com/user-attachments/assets/6c934914-4097-48e9-8a18-f3e104f4e407" width="60%" /> </div>
 
 ---
 ## Worst Case Results
-<img width="2017" height="1093" alt="worst_20260205_083112_model_fit" src="https://github.com/user-attachments/assets/a39b45f1-347f-4728-8d3d-37190be0c142" />
-<img width="1707" height="1093" alt="worst_20260205_083112_noisy_deltaC" src="https://github.com/user-attachments/assets/67a511d2-2506-4929-beff-b696cf5b801d" />
-<img width="1689" height="1093" alt="worst_20260205_083112_voltage_history" src="https://github.com/user-attachments/assets/52564b17-1ca2-42fc-8259-0c7c3a5881ba" />
-<img width="2779" height="3182" alt="worst_20260205_083112_params_states" src="https://github.com/user-attachments/assets/d24a6308-731e-466e-ba7e-85341b02849d" />
-<img width="1768" height="1093" alt="worst_20260205_083112_error_convergence" src="https://github.com/user-attachments/assets/fd11fb79-2150-4461-90fd-f86b92eecf2f" />
+<div align="center"> <img src="https://github.com/user-attachments/assets/a39b45f1-347f-4728-8d3d-37190be0c142" width="48%" /> <img src="https://github.com/user-attachments/assets/67a511d2-2506-4929-beff-b696cf5b801d" width="48%" /> </div> <div align="center"> <img src="https://github.com/user-attachments/assets/52564b17-1ca2-42fc-8259-0c7c3a5881ba" width="48%" /> <img src="https://github.com/user-attachments/assets/d24a6308-731e-466e-ba7e-85341b02849d" width="48%" /> </div> <div align="center"> <img src="https://github.com/user-attachments/assets/fd11fb79-2150-4461-90fd-f86b92eecf2f" width="60%" /> </div>
 
 ---
 ## Sensitivity Errors and Minimum Voltage Distributions
-<img width="2011" height="1401" alt="sensitivity_error_distribution_20260205_083112" src="https://github.com/user-attachments/assets/df7e0767-fd0f-4dd7-8bdf-2fefa3499960" />
-<img width="1993" height="1401" alt="min_voltage_distribution_20260205_083112" src="https://github.com/user-attachments/assets/13d61f2f-5162-4a69-9659-260c5f691795" />
+<div align="center"> <img src="https://github.com/user-attachments/assets/df7e0767-fd0f-4dd7-8bdf-2fefa3499960" width="48%" /> <img src="https://github.com/user-attachments/assets/13d61f2f-5162-4a69-9659-260c5f691795" width="48%" /> </div>
 
 ---
 ## Peaks and Valleys Distributions
-<img width="2014" height="1401" alt="third_peak_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/74897b0f-14fc-4fd9-8e71-f6ed6131e06d" />
-<img width="2011" height="1401" alt="fourth_peak_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a1b910cb-917a-43f8-aa9e-62f629b2b778" />
-<img width="2018" height="1401" alt="third_valley_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/a3e26531-3394-4a98-a3d7-02219f7f6725" />
-<img width="2011" height="1401" alt="fourth_valley_time_distribution_20260205_083112" src="https://github.com/user-attachments/assets/c98b32a1-8f4f-45f4-bf92-df0e72e5a03e" />
+<div align="center"> <img src="https://github.com/user-attachments/assets/74897b0f-14fc-4fd9-8e71-f6ed6131e06d" width="48%" /> <img src="https://github.com/user-attachments/assets/a1b910cb-917a-43f8-aa9e-62f629b2b778" width="48%" /> </div> <div align="center"> <img src="https://github.com/user-attachments/assets/a3e26531-3394-4a98-a3d7-02219f7f6725" width="48%" /> <img src="https://github.com/user-attachments/assets/c98b32a1-8f4f-45f4-bf92-df0e72e5a03e" width="48%" /> </div>
 
 ---
 ## Boxplots and Scatter Plot
-<img width="2312" height="1736" alt="error_boxplots_20260205_083112" src="https://github.com/user-attachments/assets/edffd461-2eac-41dd-bbe8-06d9f9024c7c" />
-<img width="1683" height="1401" alt="sensitivity_true_vs_est_20260205_083112" src="https://github.com/user-attachments/assets/c78fc0be-15d8-4a6d-b4e7-e15309ef98c8" />
+<div align="center"> <img src="https://github.com/user-attachments/assets/edffd461-2eac-41dd-bbe8-06d9f9024c7c" width="48%" /> <img src="https://github.com/user-attachments/assets/c78fc0be-15d8-4a6d-b4e7-e15309ef98c8" width="48%" /> </div>
 
 ### Additional Statistics
 - **Success rate:** 100.00%
