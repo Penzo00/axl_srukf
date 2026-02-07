@@ -68,7 +68,7 @@ pip install numpy scipy pandas matplotlib seaborn numba tqdm
 ```
 ---
 ## Installation
-Clone and run directly (no setup.py required):
+Clone and run directly:
 ```bash
 git clone https://github.com/Penzo00/axl_srukf.git
 cd axl_srukf
