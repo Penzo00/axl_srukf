@@ -19,7 +19,7 @@ Monte Carlo runs provide statistical validation, while utilities ensure numerica
 ## Usage
 ### Run Monte Carlo simulations
 ```bash
-python run_monte_carlo.py
+python main.py
 ```
 This will:
 - Run `N_MC_RUNS` Monte Carlo trials
@@ -72,7 +72,7 @@ Clone and run directly (no setup.py required):
 ```bash
 git clone https://github.com/Penzo00/axl_srukf.git
 cd axl_srukf
-python run_monte_carlo.py
+python main.py
 ```
 The code is offline‑friendly after dependencies are installed.
 ---
