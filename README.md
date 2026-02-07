@@ -70,7 +70,7 @@ pip install numpy scipy pandas matplotlib seaborn numba tqdm
 ## Installation
 Clone and run directly (no setup.py required):
 ```bash
-git clone [https://github.com/Penzo00/axl_srukf](https://github.com/Penzo00/axl_srukf.git)
+git clone https://github.com/Penzo00/axl_srukf.git
 cd axl_srukf
 python run_monte_carlo.py
 ```
