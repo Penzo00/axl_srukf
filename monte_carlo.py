@@ -327,7 +327,7 @@ def run_single_mc_simulation(run_id: int, true_params: np.ndarray) -> dict:
 
             # Calculate relative changes for each parameter, handling near-zero parameters
             rel_changes = np.abs((current_params - prev_params) / prev_params)
-            mask = np.abs(prev_params) < min_eigen_floor
+            mask = np.abs(prev_params) < min_eig_floor
             rel_changes[mask] = np.abs(current_params[mask] - prev_params[mask])
 
             # Check if all parameters have converged
@@ -761,3 +761,4 @@ def main_monte_carlo() -> Tuple[pd.DataFrame, pd.DataFrame]:
     print("\nMonte Carlo validation completed successfully!")
 
     return df, stats
+
